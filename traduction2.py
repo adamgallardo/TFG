@@ -10,25 +10,17 @@ cam = cv2.VideoCapture(cam_port)
 
 sucess, frame = cam.read()
 
-#cv2.imshow("Webcam", frame)
-
 cv2.imwrite("Webcam.png", frame)
 
 cv2.waitKey(0)
 
-# read image
-#img = 'data/test5.png'
-
 img = cv2.imread("Webcam.png")
 
-# instance text detector
 reader = easyocr.Reader(['en'], gpu=False)
 
-# detect text on image
 text_ = reader.readtext(img)
 
 threshold = 0.25
-# draw bbox and text
 for t_, t in enumerate(text_):
     print(t)
 
