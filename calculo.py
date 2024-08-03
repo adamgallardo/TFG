@@ -32,5 +32,11 @@ for t_, t in enumerate(text_):
 plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
 plt.show()
 
-resultado = eval(text)
-print(resultado)
+partes = text.split("=")
+print(f"{partes[0]} and {partes[1]}")
+resultado = eval(partes[0])
+print(f"{resultado}")
+if(resultado == int(partes[1])):
+    print("Correcto")
+else:
+    print("Incorrecto")
