@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # Cargar la imagen
-image = cv2.imread('tu_imagen.jpg')
+image = cv2.imread('bolasDiferentesMedidas.png')
 
 # Convertir la imagen a formato HSV
 hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -21,43 +21,36 @@ contours_yellow, _ = cv2.findContours(mask_yellow, cv2.RETR_EXTERNAL, cv2.CHAIN_
 min_area = 500  # Ajusta este valor según el tamaño de los objetos
 yellow_objects = [cnt for cnt in contours_yellow if cv2.contourArea(cnt) > min_area]
 
-# Definir el rango de color rojo en HSV
-# Nota: el color rojo puede estar en dos rangos diferentes debido a la forma en que se representa el HSV.
-lower_red1 = np.array([0, 100, 100])
-upper_red1 = np.array([10, 255, 255])
-lower_red2 = np.array([160, 100, 100])
-upper_red2 = np.array([179, 255, 255])
+# Definir el rango de color naranja en HSV
+lower_orange = np.array([10, 100, 100])
+upper_orange = np.array([20, 255, 255])
 
-# Crear dos máscaras para los diferentes rangos de rojo
-mask_red1 = cv2.inRange(hsv_image, lower_red1, upper_red1)
-mask_red2 = cv2.inRange(hsv_image, lower_red2, upper_red2)
+# Crear una máscara con el rango de color naranja
+mask_orange = cv2.inRange(hsv_image, lower_orange, upper_orange)
 
-# Combinar las dos máscaras para obtener la detección completa del color rojo
-mask_red = cv2.bitwise_or(mask_red1, mask_red2)
+# Encontrar los contornos en la máscara naranja
+contours_orange, _ = cv2.findContours(mask_orange, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-# Encontrar los contornos en la máscara roja
-contours_red, _ = cv2.findContours(mask_red, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-# Filtrar y contar los contornos rojos con un área significativa
-red_objects = [cnt for cnt in contours_red if cv2.contourArea(cnt) > min_area]
+# Filtrar y contar los contornos naranjas con un área significativa
+orange_objects = [cnt for cnt in contours_orange if cv2.contourArea(cnt) > min_area]
 
 # Dibujar los contornos detectados en la imagen original
-cv2.drawContours(image, yellow_objects, -1, (0, 255, 0), 3)  # Verde para amarillo
-cv2.drawContours(image, red_objects, -1, (255, 0, 0), 3)     # Azul para rojo (para distinguir en la visualización)
+cv2.drawContours(image, yellow_objects, -1, (255, 255, 255), 3)  # Amarillo para amarillo
+cv2.drawContours(image, orange_objects, -1, (0, 165, 255), 3)  # Naranja para naranja
 
 # Mostrar el número de objetos detectados
 print(f"Número de objetos amarillos detectados: {len(yellow_objects)}")
-print(f"Número de objetos rojos detectados: {len(red_objects)}")
+print(f"Número de objetos naranjas detectados: {len(orange_objects)}")
 
 # Comparar el número de objetos
-if len(yellow_objects) > len(red_objects):
-    print("Hay más objetos amarillos que rojos.")
-elif len(yellow_objects) < len(red_objects):
-    print("Hay más objetos rojos que amarillos.")
+if len(yellow_objects) > len(orange_objects):
+    print("Hay más objetos amarillos que naranjas.")
+elif len(yellow_objects) < len(orange_objects):
+    print("Hay más objetos naranjas que amarillos.")
 else:
-    print("El número de objetos amarillos y rojos es igual.")
+    print("El número de objetos amarillos y naranjas es igual.")
 
 # Mostrar la imagen con los contornos dibujados
-cv2.imshow('Objetos Amarillos y Rojos Detectados', image)
+cv2.imshow('Objetos Amarillos y Naranjas Detectados', image)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
