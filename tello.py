@@ -139,7 +139,7 @@ def correccion ():
                 cv.rectangle(img, bbox[0], bbox[2], (0, 255, 0), 5)
                 cv.putText(img, text, bbox[0], cv.FONT_HERSHEY_COMPLEX, 0.65, (255, 0, 0), 2)
         try:
-            partes = text.split("w")
+            partes = text.split("=")
             resultado = eval(partes[0])
             if(resultado == int(partes[1])):
                 print("Correcto")
@@ -235,6 +235,7 @@ def faltas ():
 def auto():
     global tello
     amarillo=0
+    correcto=0
     global takingVideo
     while takingVideo:
         frame = tello.get_frame_read().frame
@@ -246,11 +247,37 @@ def auto():
         region = hsv_frame[center_y-10:center_y+10, center_x-10:center_x+10]
         avg_color = np.mean(region, axis=(0, 1))
         if is_yellow(avg_color):
-            #tello.send_rc_control(0,0,0,0)
+            tello.send_rc_control(0,0,0,0)
             amarillo=amarillo+1
             print(f"Amarillo detectado {amarillo}")
-            #tello.send_rc_control(10,0,0,0)
+            if (correccionAmarillo==True):
+                correcto=correcto+1
+            tello.send_rc_control(10,0,0,0)
             time.sleep(1)
+
+def correccionAmarillo ():
+    global tello
+    frame = tello.get_frame_read().frame
+    cv.imwrite("Webcam.png", frame)
+    reader = easyocr.Reader(['en'], gpu=False)
+    img = cv.imread("Webcam.png")
+    text_ = reader.readtext(img)
+    threshold = 0.25
+    for t_, t in enumerate(text_):
+        print(t)
+        bbox, text, score = t
+        if score > threshold:
+            cv.rectangle(img, bbox[0], bbox[2], (0, 255, 0), 5)
+            cv.putText(img, text, bbox[0], cv.FONT_HERSHEY_COMPLEX, 0.65, (255, 0, 0), 2)
+    try:
+        partes = text.split("=")
+        resultado = eval(partes[0])
+        if(resultado == int(partes[1])):
+            return True
+        else:
+            return False
+    except Exception as e:
+            return False
 
 def is_yellow(color):
     lower_yellow = np.array([20, 100, 100])
@@ -260,7 +287,7 @@ def is_yellow(color):
 def start_monitoring():
     print("Iniciando")
     global tello
-    #tello.send_rc_control(10,0,0,0)
+    tello.send_rc_control(10,0,0,0)
     monitor_thread = threading.Thread(target=auto)
     monitor_thread.start()
 
@@ -307,6 +334,44 @@ def start_key_listener():
     print("Inicio de movimiento con botones")
     listener = keyboard.Listener(on_press=on_press, on_release=on_release)
     listener.start()
+
+def contarColores():
+    global tello
+    frame = tello.get_frame_read().frame
+    cv.imwrite("Webcam.png", frame)
+    img = cv.imread('Webcam.png')
+
+    hsv_image = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+
+    lower_yellow = np.array([20, 100, 100])
+    upper_yellow = np.array([30, 255, 255])
+    mask_yellow = cv.inRange(hsv_image, lower_yellow, upper_yellow)
+    contours_yellow, _ = cv.findContours(mask_yellow, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    min_area = 500 
+    yellow_objects = [cnt for cnt in contours_yellow if cv.contourArea(cnt) > min_area]
+
+    lower_orange = np.array([10, 100, 100])
+    upper_orange = np.array([20, 255, 255])
+    mask_orange = cv.inRange(hsv_image, lower_orange, upper_orange)
+    contours_orange, _ = cv.findContours(mask_orange, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    orange_objects = [cnt for cnt in contours_orange if cv.contourArea(cnt) > min_area]
+
+    cv.drawContours(img, yellow_objects, -1, (255, 255, 255), 3) 
+    cv.drawContours(img, orange_objects, -1, (0, 165, 255), 3)  
+
+    print(f"Número de objetos amarillos detectados: {len(yellow_objects)}")
+    print(f"Número de objetos naranjas detectados: {len(orange_objects)}")
+
+    if len(yellow_objects) > len(orange_objects):
+        print("Hay más objetos amarillos que naranjas.")
+    elif len(yellow_objects) < len(orange_objects):
+        print("Hay más objetos naranjas que amarillos.")
+    else:
+        print("El número de objetos amarillos y naranjas es igual.")
+
+    cv.imshow('Objetos Amarillos y Naranjas Detectados', img)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
 
 window = Tk()
 window.geometry("800x400")
@@ -369,5 +434,3 @@ derechaButton.grid(row=2, column=6, padx=5, pady=5, sticky=N + S + E + W)
 start_key_listener()
 
 window.mainloop()
-
-
