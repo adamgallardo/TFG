@@ -19,7 +19,7 @@ Un cop hàgiu descarregat l'aplicació haureu de instal·lar les llibreries nece
 ## Iniciar el programa
 
 El primer pas serà connectar l'ordinador al dron. Per fer això haureu d'encendre el dron i buscar a les xarxes de l'ordinador la que correspongui al dron.
-Un cop connectat al dron podrem iniciar l'aplicació. Quan s'obri la pantalla de tkinter pitjarem al botó de connectar i esperarem fins que aparegui per pantalla la bateria del dron.
+Un cop connectat al dron podrem iniciar l'aplicació iniciant el document tello.py. Quan s'obri la pantalla de tkinter pitjarem al botó de connectar i esperarem fins que aparegui per pantalla la bateria del dron.
 Després ja podrem fer enlairar al dron per començar a utilitzar les diferents aplicacions.
 
 ## Tello Engineering Ecosystem
