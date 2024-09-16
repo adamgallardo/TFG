@@ -25,3 +25,7 @@ Després ja podrem fer enlairar al dron per començar a utilitzar les diferents 
 ## Tello Engineering Ecosystem
 
 Aquesta aplicació és una aportació feta al [Tello Engineering Ecosystem](https://github.com/dronsEETAC/TelloEngineeringEcosystem) durant la realització del Treball de Final de Grau. Recomano donar-li un cop d'ull a la resta d'aportacions fetes pels meus companys.
+
+## Tello Engineering Ecosystem
+
+Finalment afageixo els enllaços de [una breu explicació del codi](https://youtu.be/PST7IABdawM), [una demostració de com es connecta el dron](https://youtu.be/G1GXk2hi-ek) i [una demostració de un dels espectacles](https://youtu.be/qBw4ls93aVs).
